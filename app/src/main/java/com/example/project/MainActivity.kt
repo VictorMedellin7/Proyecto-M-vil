@@ -44,7 +44,7 @@ fun GreetingScreen() {
         Text(text = "$greeting, $name!", style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
-            greeting = if (greeting == "Hello") "Goodbye" else "Hello"
+            greeting = if (greeting == "Hello") "Goodbye" else "Helloo"
         }) {
             Text(text = "Change Greeting")
         }
