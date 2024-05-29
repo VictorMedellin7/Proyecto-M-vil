@@ -10,7 +10,6 @@ private val LightColorScheme = androidx.compose.material3.lightColorScheme(
     onPrimary = Color.White,
     secondary = Color(0xFF03DAC5),
     onSecondary = Color.Black
-    // Define otros colores según tu preferencia
 )
 
 @Composable

@@ -28,7 +28,6 @@ fun GameScreen() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Título del juego
         Text(
             text = "Ahorcado",
             style = MaterialTheme.typography.headlineMedium, // Utiliza headlineMedium para Material 3
@@ -37,17 +36,14 @@ fun GameScreen() {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Dibujo del ahorcado
         HangmanDrawing(incorrectGuesses)
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Palabra oculta
         WordDisplay(word, guessedLetters)
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Campo de texto para ingresar letras
         LetterInput { letter ->
             if (word.contains(letter, ignoreCase = true)) {
                 guessedLetters += letter.uppercase()
@@ -58,7 +54,6 @@ fun GameScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Mostrar el número de intentos incorrectos
         Text(
             text = "Intentos incorrectos: $incorrectGuesses",
             fontSize = 20.sp,
@@ -69,19 +64,17 @@ fun GameScreen() {
 
 @Composable
 fun HangmanDrawing(incorrectGuesses: Int) {
-    Canvas(modifier = Modifier.size(400.dp)) {  // Ajusta el tamaño del lienzo
-        val baseY = 360f  // Coordenada Y de la base
-        val poleHeight = 300f  // Altura del poste vertical
-        val beamLength = 200f  // Longitud de la viga horizontal
-        val nooseHeight = 40f  // Altura del lazo
+    Canvas(modifier = Modifier.size(400.dp)) {
+        val baseY = 360f
+        val poleHeight = 300f
+        val beamLength = 200f
+        val nooseHeight = 40f
 
-        // Dibuja el marco del ahorcado
         drawLine(Color.Black, start = Offset(75f, baseY), end = Offset(325f, baseY), strokeWidth = 10f)
         drawLine(Color.Black, start = Offset(200f, baseY), end = Offset(200f, baseY - poleHeight), strokeWidth = 10f)
         drawLine(Color.Black, start = Offset(200f, baseY - poleHeight), end = Offset(200f + beamLength, baseY - poleHeight), strokeWidth = 10f)
         drawLine(Color.Black, start = Offset(200f + beamLength, baseY - poleHeight), end = Offset(200f + beamLength, baseY - poleHeight + nooseHeight), strokeWidth = 10f)
 
-        // Dibuja el ahorcado basado en los intentos incorrectos
         if (incorrectGuesses > 0) {
             drawCircle(Color.Black, center = Offset(200f + beamLength, baseY - poleHeight + nooseHeight + 30f), radius = 30f, style = Stroke(width = 4f))
         }
