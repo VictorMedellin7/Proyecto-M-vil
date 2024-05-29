@@ -1,33 +1,24 @@
 package com.example.project.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple200,
-    secondary = Teal200,
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = Purple500,
-    secondary = Teal200,
+private val LightColorScheme = androidx.compose.material3.lightColorScheme(
+    primary = Color(0xFF000000),
+    onPrimary = Color.White,
+    secondary = Color(0xFF03DAC5),
+    onSecondary = Color.Black
+    // Define otros colores según tu preferencia
 )
 
 @Composable
-fun ProjectTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
-) {
-    val colors = if (darkTheme) {
-        DarkColorScheme
-    } else {
-        LightColorScheme
-    }
-
+fun ProjectTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        colorScheme = colors,
-        typography = Typography,
+        colorScheme = LightColorScheme,
+        typography = Typography(),
         content = content
     )
 }
+
