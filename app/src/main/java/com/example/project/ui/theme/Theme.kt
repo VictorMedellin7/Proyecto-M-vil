@@ -9,7 +9,7 @@ private val LightColorScheme = androidx.compose.material3.lightColorScheme(
     primary = Color(0xFF000000),
     onPrimary = Color.White,
     secondary = Color(0xFF03DAC5),
-    onSecondary = Color.Black
+    onSecondary = Color.Black,
 )
 
 @Composable
@@ -20,4 +20,5 @@ fun ProjectTheme(content: @Composable () -> Unit) {
         content = content
     )
 }
+
 

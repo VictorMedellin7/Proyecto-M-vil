@@ -14,51 +14,84 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.project.logic.GameLogic
+import com.example.project.db.WordRepository
 
 @Composable
 fun GameScreen() {
-    var word by remember { mutableStateOf("KOTLIN") }
-    var guessedLetters by remember { mutableStateOf("") }
-    var incorrectGuesses by remember { mutableStateOf(0) }
+    val wordRepository = WordRepository()
+    var gameLogic by remember { mutableStateOf(GameLogic(wordRepository.getRandomWord())) }
+    var showDialog by remember { mutableStateOf(false) }
+    var dialogMessage by remember { mutableStateOf("") }
+    var dialogTitle by remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Ahorcado",
-            style = MaterialTheme.typography.headlineMedium, // Utiliza headlineMedium para Material 3
-            color = MaterialTheme.colorScheme.primary
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        HangmanDrawing(incorrectGuesses)
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        WordDisplay(word, guessedLetters)
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        LetterInput { letter ->
-            if (word.contains(letter, ignoreCase = true)) {
-                guessedLetters += letter.uppercase()
-            } else {
-                incorrectGuesses++
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = {},
+            title = {
+                Text(text = dialogTitle)
+            },
+            text = {
+                Text(dialogMessage)
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    gameLogic = GameLogic(wordRepository.getRandomWord())
+                    showDialog = false
+                }) {
+                    Text("Volver a jugar")
+                }
             }
+        )
+    }
+
+    Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.End
+        ) {
+            Text(
+                text = "Intentos: ${3 - gameLogic.incorrectGuesses}",
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Ahorcado",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
 
-        Text(
-            text = "Intentos incorrectos: $incorrectGuesses",
-            fontSize = 20.sp,
-            color = MaterialTheme.colorScheme.error
-        )
+            Spacer(modifier = Modifier.height(32.dp))
+
+            HangmanDrawing(gameLogic.incorrectGuesses)
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            WordDisplay(gameLogic.word, gameLogic.guessedLetters)
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            if (gameLogic.gameOver) {
+                dialogTitle = if (gameLogic.gameWon) "¡Felicidades!" else "¡Has perdido!"
+                dialogMessage = if (gameLogic.gameWon) "¡Has ganado el juego!" else "La palabra era ${gameLogic.word}"
+                showDialog = true
+            } else {
+                LetterInput { letter ->
+                    gameLogic.makeGuess(letter)
+                }
+            }
+        }
     }
 }
 
@@ -77,25 +110,18 @@ fun HangmanDrawing(incorrectGuesses: Int) {
 
         if (incorrectGuesses > 0) {
             drawCircle(Color.Black, center = Offset(200f + beamLength, baseY - poleHeight + nooseHeight + 30f), radius = 30f, style = Stroke(width = 4f))
-        }
-        if (incorrectGuesses > 1) {
             drawLine(Color.Black, start = Offset(200f + beamLength, baseY - poleHeight + nooseHeight + 60f), end = Offset(200f + beamLength, baseY - poleHeight + nooseHeight + 150f), strokeWidth = 4f)
         }
-        if (incorrectGuesses > 2) {
+        if (incorrectGuesses > 1) {
             drawLine(Color.Black, start = Offset(200f + beamLength, baseY - poleHeight + nooseHeight + 80f), end = Offset(200f + beamLength - 30f, baseY - poleHeight + nooseHeight + 110f), strokeWidth = 4f)
-        }
-        if (incorrectGuesses > 3) {
             drawLine(Color.Black, start = Offset(200f + beamLength, baseY - poleHeight + nooseHeight + 80f), end = Offset(200f + beamLength + 30f, baseY - poleHeight + nooseHeight + 110f), strokeWidth = 4f)
         }
-        if (incorrectGuesses > 4) {
+        if (incorrectGuesses > 2) {
             drawLine(Color.Black, start = Offset(200f + beamLength, baseY - poleHeight + nooseHeight + 150f), end = Offset(200f + beamLength - 30f, baseY - poleHeight + nooseHeight + 210f), strokeWidth = 4f)
-        }
-        if (incorrectGuesses > 5) {
             drawLine(Color.Black, start = Offset(200f + beamLength, baseY - poleHeight + nooseHeight + 150f), end = Offset(200f + beamLength + 30f, baseY - poleHeight + nooseHeight + 210f), strokeWidth = 4f)
         }
     }
 }
-
 @Composable
 fun WordDisplay(word: String, guessedLetters: String) {
     Row {
@@ -135,5 +161,6 @@ fun LetterInput(onLetterEntered: (String) -> Unit) {
             .padding(8.dp)
     )
 }
+
 
 
