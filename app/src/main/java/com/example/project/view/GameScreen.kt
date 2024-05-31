@@ -2,6 +2,7 @@ package com.example.project.view
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.*
@@ -11,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,58 +31,52 @@ fun GameScreen() {
         AlertDialog(
             onDismissRequest = {},
             title = {
-                Text(text = dialogTitle)
+                Text(text = dialogTitle, style = MaterialTheme.typography.headlineMedium, color = Color.Red)
             },
             text = {
-                Text(dialogMessage)
+                Text(dialogMessage, style = MaterialTheme.typography.bodyLarge, color = Color.Gray)
             },
             confirmButton = {
                 TextButton(onClick = {
                     gameLogic = GameLogic(wordRepository.getRandomWord())
                     showDialog = false
                 }) {
-                    Text("Volver a jugar")
+                    Text("Volver a jugar", style = MaterialTheme.typography.labelLarge, color = Color.Black)
                 }
-            }
+            },
+            modifier = Modifier.background(Color.White).border(2.dp, Color.Black)
         )
     }
 
-    Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.End
-        ) {
-            Text(
-                text = "Intentos: ${3 - gameLogic.incorrectGuesses}",
-                fontSize = 20.sp,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
-
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)
+        .background(Color(0xFFF0EAD6))
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "Ahorcado",
                 style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.primary
+                color = Color(0xFF6200EA)
             )
-
-            Spacer(modifier = Modifier.height(32.dp))
 
             HangmanDrawing(gameLogic.incorrectGuesses)
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                text = "Intentos: ${3 - gameLogic.incorrectGuesses}",
+                fontSize = 20.sp,
+                color = Color(0xFF6200EA)
+            )
 
             WordDisplay(gameLogic.word, gameLogic.guessedLetters)
 
-            Spacer(modifier = Modifier.height(32.dp))
+            GuessedLettersDisplay(gameLogic.guessedLettersList)
 
             if (gameLogic.gameOver) {
                 dialogTitle = if (gameLogic.gameWon) "¡Felicidades!" else "¡Has perdido!"
@@ -97,7 +93,7 @@ fun GameScreen() {
 
 @Composable
 fun HangmanDrawing(incorrectGuesses: Int) {
-    Canvas(modifier = Modifier.size(400.dp)) {
+    Canvas(modifier = Modifier.size(300.dp).border(2.dp, Color.Black)) {
         val baseY = 360f
         val poleHeight = 300f
         val beamLength = 200f
@@ -122,6 +118,7 @@ fun HangmanDrawing(incorrectGuesses: Int) {
         }
     }
 }
+
 @Composable
 fun WordDisplay(word: String, guessedLetters: String) {
     Row {
@@ -134,7 +131,28 @@ fun WordDisplay(word: String, guessedLetters: String) {
             Text(
                 text = displayLetter,
                 fontSize = 32.sp,
-                modifier = Modifier.padding(4.dp)
+                modifier = Modifier.padding(4.dp),
+                color = if (displayLetter == "_") Color.Gray else Color.Black,
+                style = TextStyle(fontSize = 32.sp, color = Color.Black)
+            )
+        }
+    }
+}
+
+@Composable
+fun GuessedLettersDisplay(guessedLettersList: List<String>) {
+    Row {
+        Text(
+            text = "Letras escritas: ",
+            fontSize = 20.sp,
+            color = Color(0xFF6200EA)
+        )
+        guessedLettersList.forEach { letter ->
+            Text(
+                text = letter,
+                fontSize = 20.sp,
+                color = Color(0xFF6200EA),
+                modifier = Modifier.padding(start = 4.dp)
             )
         }
     }
@@ -155,12 +173,12 @@ fun LetterInput(onLetterEntered: (String) -> Unit) {
                 }
             }
         },
-        textStyle = LocalTextStyle.current.copy(fontSize = 24.sp),
+        textStyle = LocalTextStyle.current.copy(fontSize = 24.sp, color = Color.Black),
         modifier = Modifier
+            .border(2.dp, Color.Black)
             .background(Color.White)
             .padding(8.dp)
+            .width(50.dp)
     )
 }
-
-
 

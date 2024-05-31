@@ -15,11 +15,16 @@ class GameLogic(word: String) {
         private set
     var gameWon: Boolean by mutableStateOf(false)
         private set
+    var guessedLettersList: List<String> by mutableStateOf(emptyList())
+        private set
 
     fun makeGuess(letter: String) {
-        if (!guessedLetters.contains(letter, ignoreCase = true)) {
+        val uppercaseLetter = letter.uppercase()
+        if (!guessedLetters.contains(uppercaseLetter, ignoreCase = true) &&
+            !guessedLettersList.contains(uppercaseLetter)) {
+            guessedLettersList = guessedLettersList + uppercaseLetter
             if (word.contains(letter, ignoreCase = true)) {
-                guessedLetters += letter.uppercase()
+                guessedLetters += uppercaseLetter
                 if (word.all { it.uppercaseChar() in guessedLetters }) {
                     gameWon = true
                     gameOver = true
@@ -33,4 +38,5 @@ class GameLogic(word: String) {
         }
     }
 }
+
 
